@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  postgresql_development:
+    image: postgres:15
+    environment:
+      POSTGRES_DATABASE: "DB_DEVELOPMENT"
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "5410:5432"
