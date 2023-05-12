@@ -5,3 +5,13 @@ Smart QR Menus is a web application that uses GPT-3 to parse text or PDF menus a
 This project is designed to help restaurant owners create and manage their menus more efficiently, saving them time and money. With the app's easy-to-use interface, restaurant owners can quickly create and update their menus, ensuring that their customers always have access to the latest offerings.
 
 Whether you're a small cafe or a large restaurant, Smart QR Menus can help simplify your menu management process and provide your customers with an enhanced dining experience.
+
+# Setup
+
+Update env variables
+
+```sh
+  git clone https://github.com/SMLukwiya/menu-magic.git
+  npm install
+  npm run dev
+```
