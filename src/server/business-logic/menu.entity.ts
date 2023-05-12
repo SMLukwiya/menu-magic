@@ -1,9 +1,18 @@
-import ClerkUserEntity from "@/server/business-logic/clerk-user.entity";
 import { prisma } from "@/server/db";
 import { type ValidationSchemaForCreateMenu } from "@/server/api/validation-schemas/menu.schema";
 import { type Menu } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { type AsyncReturnType } from "type-fest";
+import { Configuration, OpenAIApi } from "openai";
+import { env } from "@/env.mjs";
+import {
+  JSONSchema,
+  validationSchemaForCreateMenu,
+} from "@/server/api/validation-schemas/menu.schema";
+
+const configuration = new Configuration({
+  organization: "org-jGwCTgBd7LlDlhS1hi6UwrDD",
+  apiKey: env.OPEN_AI_API_KEY,
+});
 
 export default class ExamplePostEntity {
   async create(userId: string, input: ValidationSchemaForCreateMenu) {
@@ -52,7 +61,7 @@ export default class ExamplePostEntity {
     return true;
   }
 
-  async find(menuId: string) {
+  async find(userId: string, menuId: string) {
     const menu = await prisma.menu.findUnique({
       where: {
         id: menuId,
@@ -69,31 +78,36 @@ export default class ExamplePostEntity {
       });
     }
 
-    const user = await new ClerkUserEntity().findUserForClient(menu.userId);
-
-    return {
-      menu,
-      user,
-    };
+    return menu.userId === userId ? menu : [];
   }
 
-  private map(
-    menu: Menu,
-    users: AsyncReturnType<typeof ClerkUserEntity.prototype.listUsersForClient>
-  ) {
-    const user = users.find((user) => user.id === menu.userId);
+  async createMenuFromPlainWithGpt(userId: string, menu: string) {
+    const openai = new OpenAIApi(configuration);
 
-    if (!user) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "User not found",
-      });
+    const prompt = `${menu}. 
+    Can you please return a JSON representation of the provided data?
+    Use this JSON schema as the structure ${JSON.stringify(
+      JSONSchema
+    )}, ignore any extra fields. Add empty strings for any missing field.`;
+    const JSONResult = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt,
+      max_tokens: 1000,
+      temperature: 0.7,
+      top_p: 1.0,
+    });
+
+    const responseData = JSONResult.data.choices[0]?.text;
+
+    if (!responseData) throw new Error("No response returned from request!");
+
+    const parsedMenu = this.transformData(responseData);
+
+    if (!parsedMenu) {
+      throw new Error("Could not parse the menu");
     }
 
-    return {
-      menu,
-      user,
-    };
+    return await this.create(userId, parsedMenu);
   }
 
   private validateAccess(menu: Menu | null, userId: string) {
@@ -109,6 +123,18 @@ export default class ExamplePostEntity {
         code: "FORBIDDEN",
         message: "This menu doesn't belong to you",
       });
+    }
+  }
+
+  private transformData(data?: string) {
+    if (!data) return;
+
+    try {
+      const menu = validationSchemaForCreateMenu.parse(JSON.parse(data));
+      return menu;
+    } catch (e) {
+      console.error("Create Menu: ChatGpt Parsing Error");
+      return false;
     }
   }
 }
