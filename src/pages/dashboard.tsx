@@ -3,8 +3,15 @@ import { Button } from "@/components/ui/button";
 import { type NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+import { api } from "@/lib/api";
 
 const Dashboard: NextPage = () => {
+  const { user } = useUser();
+  const query = api.menu.list.useQuery({ userId: user?.id || "" });
+
+  const menu = query.data;
+
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center pb-3">
@@ -21,7 +28,7 @@ const Dashboard: NextPage = () => {
           </p>
           <ActionButton
             text="Paste as text"
-            disabled={false}
+            disabled={!!menu}
             path="/menu/new"
           />
           <ActionButton

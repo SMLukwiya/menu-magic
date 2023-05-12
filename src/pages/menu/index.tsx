@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
-import ListExamplePostsPage from "@/components/menu/pages/list.page";
+import ListMenuPage from "@/components/menu/pages/list.page";
 
-const ListPosts: NextPage = () => {
-  return <ListExamplePostsPage />;
+const ListMenuItems: NextPage = () => {
+  return <ListMenuPage />;
 };
 
-export default ListPosts;
+export default ListMenuItems;
