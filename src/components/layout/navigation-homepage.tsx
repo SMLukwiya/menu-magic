@@ -11,8 +11,8 @@ const NavigationHomepage = () => {
         <div className="flex">
           <Link href="/" className="flex cursor-pointer items-center">
             <div className="flex cursor-pointer items-center gap-2">
-              <Image src="/logo.svg" alt="logo" width={22} height={22} />
-              <div className="font-bold text-slate-200">luno</div>
+              <Image src="/logo.png" alt="logo" width={22} height={22} />
+              <div className="font-bold text-slate-200">Menu Magic</div>
             </div>
           </Link>
         </div>

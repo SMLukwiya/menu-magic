@@ -1,9 +1,8 @@
 import { Layout } from "@/components/layout/layout";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { LoadingPage } from "@/components/ui/loading";
-import { Plus } from "lucide-react";
+import { ArrowDownIcon } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
 import { type ValidationSchemaForMenuItem } from "@/server/api/validation-schemas/menu.schema";
@@ -26,14 +25,11 @@ const ListMenuPage = () => {
               The fast and easy way to create menus.
             </p>
           </div>
-          {menu && !menu.length && (
-            <Link href="menu/new">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                New
-              </Button>
-            </Link>
-          )}
+
+          <Button disabled className="border disabled:text-slate-500">
+            English
+            <ArrowDownIcon className="ml-4 h-4 w-4" />
+          </Button>
         </div>
         <div className="relative h-full space-y-3 pt-3">
           {(!menu || !user) && <LoadingPage />}
@@ -47,7 +43,7 @@ const ListMenuPage = () => {
   );
 };
 
-const MenuItemComponent = ({ item }: { item: ValidationSchemaForMenuItem }) => {
+function MenuItemComponent({ item }: { item: ValidationSchemaForMenuItem }) {
   return (
     <div
       id={item.id}
@@ -61,6 +57,6 @@ const MenuItemComponent = ({ item }: { item: ValidationSchemaForMenuItem }) => {
       </div>
     </div>
   );
-};
+}
 
 export default ListMenuPage;

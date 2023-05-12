@@ -19,7 +19,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         {...pageProps}
         appearance={{
           layout: {
-            logoImageUrl: "/logo.svg",
+            logoImageUrl: "/logo.png",
             socialButtonsVariant: "blockButton",
             logoPlacement: "outside",
           },

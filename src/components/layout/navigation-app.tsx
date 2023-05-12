@@ -32,9 +32,9 @@ const NavigationDesktop = () => {
   return (
     <aside className="flex h-screen w-64 flex-col space-y-6 overflow-hidden overflow-y-scroll border-r border-r-accent bg-slate-900 px-3 pb-3 pt-6">
       <div>
-        <Link href="/dashboard" className="flex cursor-pointer px-2">
+        <Link href="/" className="flex cursor-pointer px-2">
           <div className="flex cursor-pointer items-center gap-2">
-            <Image src="/logo.svg" alt="logo" width={22} height={22} />
+            <Image src="/logo.png" alt="logo" width={22} height={22} />
             <div className="font-bold">luno</div>
           </div>
         </Link>

@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 
 import { NavigationHomepage } from "@/components/layout/navigation-homepage";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import Image from "next/image";
 
 const Home: NextPage = () => {
@@ -18,18 +16,11 @@ const Home: NextPage = () => {
             Ready for some menu magic? Import your menu and watch our AI
             transform it into a smart menu that speaks multiple langauges.
           </p>
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <Link href="/sign-up">
-              <Button size="lg" className="bg-slate-100" variant="ghost">
-                Get started
-              </Button>
-            </Link>
-          </div>
         </div>
       </main>
       <div className="m-auto max-w-5xl px-12 pt-12 2xl:max-w-7xl">
         <Image
-          src="/screenshot-app.png"
+          src="/Screenshot-app.png"
           alt="screenshot of app"
           width={2310}
           height={1118}

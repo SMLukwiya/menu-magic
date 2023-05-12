@@ -21,39 +21,7 @@ export const menuRouter = createTRPCRouter({
   create: privateProcedure
     .input(validationSchemaInput)
     .mutation(async ({ ctx, input }) => {
-      let promptCount = 0;
-      const openai = new OpenAIApi(configuration);
-
-      const prompt = `${input.menu}. 
-      Can you please return a JSON representation of the provided data?
-      Use this JSON schema as the structure ${JSON.stringify(JSONSchema)}`;
-      const JSONResult = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt,
-        max_tokens: 1000,
-        temperature: 0.7,
-        top_p: 1.0,
-      });
-
-      let data = JSONResult.data.choices[0]?.text;
-
-      if (!data) return new Error("No response returned from request!");
-
-      const menu = transformData(data);
-      promptCount++;
-
-      if (!menu && promptCount < 2) {
-        const prompt = `${input.menu}. 
-        Can you please proceed with the JSON response where you stopped?`;
-        const JSONResult = await openai.createCompletion({
-          model: "text-davinci-003",
-          prompt,
-          max_tokens: 1000,
-          temperature: 0.7,
-          top_p: 1.0,
-        });
-        data += JSONResult.data.choices[0]?.text;
-      }
+      const menu = await menuParser(input.menu);
 
       if (!menu) {
         throw new Error("Could not parse the menu");
@@ -72,6 +40,31 @@ export const menuRouter = createTRPCRouter({
       return new MenuEntity().delete(ctx.userId, input);
     }),
 });
+
+async function menuParser(menu: string) {
+  const openai = new OpenAIApi(configuration);
+
+  const prompt = `${menu}. 
+    Can you please return a JSON representation of the provided data?
+    Use this JSON schema as the structure ${JSON.stringify(
+      JSONSchema
+    )}, ignore any extra fields. Add empty strings for any missing field.`;
+  const JSONResult = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt,
+    max_tokens: 1000,
+    temperature: 0.7,
+    top_p: 1.0,
+  });
+
+  const responseData = JSONResult.data.choices[0]?.text;
+
+  if (!responseData) throw new Error("No response returned from request!");
+
+  const parsedMenu = transformData(responseData);
+
+  return parsedMenu;
+}
 
 function transformData(data?: string) {
   if (!data) return;
