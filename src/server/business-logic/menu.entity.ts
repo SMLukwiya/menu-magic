@@ -34,7 +34,6 @@ export default class MenuEntity {
     const menu = await prisma.menu.findFirst({
       where: {
         userId,
-        id: userId,
       },
       include: {
         items: true,
