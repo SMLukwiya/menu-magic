@@ -14,7 +14,7 @@ const configuration = new Configuration({
   apiKey: env.OPEN_AI_API_KEY,
 });
 
-export default class ExamplePostEntity {
+export default class MenuEntity {
   async create(userId: string, input: ValidationSchemaForCreateMenu) {
     const menu = await prisma.menu.create({
       data: {
@@ -34,6 +34,7 @@ export default class ExamplePostEntity {
     const menu = await prisma.menu.findFirst({
       where: {
         userId,
+        id: userId,
       },
       include: {
         items: true,

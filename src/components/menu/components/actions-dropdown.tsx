@@ -4,8 +4,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/api";
 import { Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { type MouseEvent, useState } from "react";
@@ -23,47 +21,18 @@ import {
 
 const ActionsDropdown = ({
   children,
-  postId,
   withoutEdit,
 }: {
   children: React.ReactNode;
   postId: string;
   withoutEdit?: boolean;
 }) => {
-  const ctx = api.useContext();
   const router = useRouter();
-  const deleteMutation = api.examplePost.delete.useMutation({
-    onSuccess: async () => {
-      toast({
-        description: "Your post has been deleted.",
-      });
-
-      await ctx.examplePost.list.invalidate();
-      await router.push("/example-posts");
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.content;
-      if (errorMessage && errorMessage[0]) {
-        toast({
-          variant: "destructive",
-          description: errorMessage[0],
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          description: "Error! Please try again later.",
-        });
-      }
-    },
-  });
   const [isOpen, setIsOpen] = useState(false);
 
   const onDeleteConfirmed = (e: MouseEvent) => {
-    e.stopPropagation();
-    deleteMutation.mutate(postId);
-    ctx.examplePost.invalidate().catch(console.error);
-    setIsOpen(false);
-    void router.push("/example-posts");
+    {
+    }
   };
 
   const DeleteConfirmationDialog = () => {
@@ -72,7 +41,7 @@ const ActionsDropdown = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to delete this Example Post?
+              Are you sure you want to delete this MEnu?
             </AlertDialogTitle>
             <AlertDialogDescription>
               This action is permanent and cannot be undone.
@@ -101,7 +70,6 @@ const ActionsDropdown = ({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                void router.push(`/example-posts/${postId}/edit`);
               }}
             >
               <Edit className="mr-2 h-4 w-4" />
